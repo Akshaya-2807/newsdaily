@@ -13,6 +13,8 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   late TeslaBloc teslaBloc;
+  static String type = "everything";
+  var _controller = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -46,87 +48,119 @@ class HomePageState extends State<HomePage> {
                                   snapshot.data!.articles[index].title))),
                     );
                   },
-                  child: Card(
-                    elevation: 5,
-                    child: Container(
-                        height: 120,
-                        margin: EdgeInsets.all(5),
-                        child: Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    children: [
+                      if (index == 0)
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          height: 40,
+                          //width: MediaQuery.of(context).size.width * 0.9,
+                          child: TextField(
+                            controller: _controller,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Search....',
+                                suffixIcon: HomePageState.type != "everything"
+                                    ? IconButton(
+                                        onPressed: () {
+                                          _controller.clear();
+                                          HomePageState.type = "everything";
+                                          teslaBloc.getTesla();
+                                        },
+                                        icon: Icon(Icons.close))
+                                    : null,
+                                contentPadding: EdgeInsets.all(3)),
+                            onChanged: (value) {
+                              HomePageState.type = value;
+                              teslaBloc.getTesla();
+                            },
+                          ),
+                        ),
+                      Card(
+                        elevation: 5,
+                        child: Container(
+                            height: 120,
+                            margin: EdgeInsets.all(5),
+                            child: Column(
                               children: [
-                                if (snapshot.data!.articles[index].urlToImage !=
-                                    null)
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(0)),
-                                    child: Image.network(
-                                      snapshot
-                                          .data!.articles[index].urlToImage!,
-                                      height: 100,
-                                      width: 150,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(0)),
-                                          child: Image.network(
-                                            "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=170667a&w=0&h=mRTFds0L_Hq63ohdqIdHXMrE32DqOnajt4I0yJ1bBtU=",
-                                            height: 100,
-                                            width: 150,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Container();
-                                            },
-                                          ),
-                                        );
-                                      },
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    if (snapshot
+                                            .data!.articles[index].urlToImage !=
+                                        null)
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(0)),
+                                        child: Image.network(
+                                          snapshot.data!.articles[index]
+                                              .urlToImage!,
+                                          height: 100,
+                                          width: 150,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(0)),
+                                              child: Image.network(
+                                                "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=170667a&w=0&h=mRTFds0L_Hq63ohdqIdHXMrE32DqOnajt4I0yJ1bBtU=",
+                                                height: 100,
+                                                width: 150,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Container();
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    else
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(0)),
+                                        child: Image.network(
+                                          "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=170667a&w=0&h=mRTFds0L_Hq63ohdqIdHXMrE32DqOnajt4I0yJ1bBtU=",
+                                          height: 100,
+                                          width: 150,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Container();
+                                          },
+                                        ),
+                                      ),
+                                    SizedBox(
+                                      width: 7,
                                     ),
-                                  )
-                                else
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(0)),
-                                    child: Image.network(
-                                      "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=170667a&w=0&h=mRTFds0L_Hq63ohdqIdHXMrE32DqOnajt4I0yJ1bBtU=",
-                                      height: 100,
-                                      width: 150,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Container();
-                                      },
+                                    Flexible(
+                                      child: Text(
+                                        snapshot.data!.articles[index].title,
+                                        style: TextStyle(
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                  ),
-                                SizedBox(
-                                  width: 7,
+                                  ],
                                 ),
-                                Flexible(
-                                  child: Text(
-                                    snapshot.data!.articles[index].title,
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      timeAgo(DateTime.parse(snapshot
+                                          .data!.articles[index].publishedAt)),
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey),
+                                    ),
+                                  ],
+                                )
                               ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  timeAgo(DateTime.parse(snapshot
-                                      .data!.articles[index].publishedAt)),
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey),
-                                ),
-                              ],
-                            )
-                          ],
-                        )),
+                            )),
+                      ),
+                    ],
                   ),
                 );
               },
